@@ -6,6 +6,7 @@ var Injector = require('../lib/injector');
 var App = require('../lib/app');
 var AppPool = require('../lib/app_pool');
 var testLogic = require('../lib/test_logic');
+var cucumberRunner = require('../lib/cucumber_runner');
 var helpers = require('../lib/helpers');
 var logger = require('../lib/logger');
 var qbox = require('qbox');
@@ -93,13 +94,19 @@ module.exports = {
           mongoPort: argv.mport,
           settingsFile: (argv.settings)? path.resolve(argv.settings) : null
       });
-      appPool.on('ready', onAppPoolReady);
 
-      if(argv.ui == 'tdd') {
-        test = testLogic(appPool, phantom);
-        ltest = ltestWithWarning(test);
-      } else if(argv.ui == 'bdd') {
-        it = testLogic(appPool, phantom);
+      if(argv.ui == 'cucumber') {
+        var onAppPollReadyRunCucumber = cucumberRunner(appPool, phantom, atTheEnd);
+        appPool.on('ready', onAppPollReadyRunCucumber);
+      } else {
+        appPool.on('ready', onAppPoolReady);
+
+        if(argv.ui == 'tdd') {
+          test = testLogic(appPool, phantom);
+          ltest = ltestWithWarning(test);
+        } else if(argv.ui == 'bdd') {
+          it = testLogic(appPool, phantom);
+        }        
       }
     });
 
