@@ -96,7 +96,7 @@ module.exports = {
       });
 
       if(argv.ui == 'cucumber') {
-        var onAppPollReadyRunCucumber = cucumberRunner(appPool, phantom, atTheEnd);
+        var onAppPollReadyRunCucumber = cucumberRunner(argv, appPool, phantom, atTheEnd);
         appPool.on('ready', onAppPollReadyRunCucumber);
       } else {
         appPool.on('ready', onAppPoolReady);
